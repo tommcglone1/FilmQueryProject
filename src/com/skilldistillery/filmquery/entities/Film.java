@@ -17,13 +17,22 @@ public class Film {
 	private String specialFeatures;
 	private List<Actor> actorList;
 
-	
 	public Film() {
-		
+
 	}
-	
+
+	public Film(String title, String description, Integer releaseYear, String rating, List<Actor> actorList) {
+		super();
+		this.title = title;
+		this.description = description;
+		this.releaseYear = releaseYear;
+		this.rating = rating;
+		this.actorList = actorList;
+	}
+
 	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
-			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures, List<Actor> actorList) {
+			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures,
+			List<Actor> actorList) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -125,11 +134,11 @@ public class Film {
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
-	
+
 	public List<Actor> getActorList() {
 		return actorList;
 	}
-	
+
 	public void setActorList(List<Actor> actorList) {
 		this.actorList = actorList;
 	}
@@ -153,11 +162,8 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
-				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
-				+ ", specialFeatures=" + specialFeatures + ", actorList=" + actorList + "]";
+		return "title= " + title + "\ndescription= " + description + "\nreleaseYear=" + releaseYear + "\nrating= "
+				+ rating + "\nactorList=" + actorList + "";
 	}
-
 
 }

@@ -31,7 +31,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement ps = null;
 		ResultSet filmResult = null;
 		Connection conn = null;
-		String query = "SELECT * FROM film WHERE id = ?";
+		String query = "SELECT film.title, film.description, film.release_year, film.rating FROM film WHERE id = ?";
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASS);
@@ -39,12 +39,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			ps.setInt(1, filmId);
 			filmResult = ps.executeQuery();
 			if (filmResult.next()) {
-				film = new Film(filmResult.getInt("id"), filmResult.getString("title"),
-						filmResult.getString("description"), filmResult.getInt("release_year"),
-						filmResult.getInt("language_id"), filmResult.getInt("rental_duration"),
-						filmResult.getDouble("rental_rate"), filmResult.getInt("length"),
-						filmResult.getDouble("replacement_cost"), filmResult.getString("rating"),
-						filmResult.getString("special_features"), findActorsByFilmId(filmId));
+				film = new Film(filmResult.getString("title"), filmResult.getString("description"),
+						filmResult.getInt("release_year"), filmResult.getString("rating"), findActorsByFilmId(filmId));
 			}
 			filmResult.close();
 			ps.close();
@@ -153,5 +149,49 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			}
 		}
 		return actorList;
+	}
+
+	@Override
+	public List<Film> findFilmByKeyWord(String filmKeyword) {
+		List<Film> films = new ArrayList<>();
+		PreparedStatement ps = null;
+		ResultSet filmResult = null;
+		Connection conn = null;
+		String query = "SELECT film.id, film.title, film. description, film. release_year, film.rating FROM film WHERE film.title LIKE ? OR film.description LIKE ?";
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASS);
+			ps = conn.prepareStatement(query);
+			ps.setString(1, "%" + filmKeyword + "%");
+			ps.setString(2, "%" + filmKeyword + "%");
+			filmResult = ps.executeQuery();
+			while (filmResult.next()) {
+				Film film = new Film(filmResult.getString("title"), filmResult.getString("description"),
+						filmResult.getInt("release_year"), filmResult.getString("rating"),
+						findActorsByFilmId(filmResult.getInt("id")));
+
+				films.add(film);
+			}
+			filmResult.close();
+			ps.close();
+			conn.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			try {
+				if (filmResult != null) {
+					filmResult.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException sqle) {
+				System.err.println(sqle);
+			}
+		}
+		return films;
 	}
 }
