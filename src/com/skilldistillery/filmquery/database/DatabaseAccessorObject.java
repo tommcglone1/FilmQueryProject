@@ -31,7 +31,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement ps = null;
 		ResultSet filmResult = null;
 		Connection conn = null;
-		String query = "SELECT film.title, film.description, film.release_year, film.rating FROM film WHERE id = ?";
+		String query = "SELECT film.title, film.description, film.release_year, film.rating, language.name \n"
+				+ "FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASS);
@@ -39,8 +40,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			ps.setInt(1, filmId);
 			filmResult = ps.executeQuery();
 			if (filmResult.next()) {
-				film = new Film(filmResult.getString("title"), filmResult.getString("description"),
-						filmResult.getInt("release_year"), filmResult.getString("rating"), findActorsByFilmId(filmId));
+				film = new Film(filmResult.getString("film.title"), filmResult.getString("film.description"),
+						filmResult.getInt("film.release_year"), filmResult.getString("film.rating"),
+						filmResult.getString("language.name"), findActorsByFilmId(filmId));
 			}
 			filmResult.close();
 			ps.close();
@@ -114,7 +116,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement ps = null;
 		ResultSet listResult = null;
 		Connection conn = null;
-		String query = "SELECT actor.* FROM film JOIN film_actor ON film.id = film_actor.film_id JOIN actor ON film_actor.actor_id = actor.id  WHERE film.id = ?;";
+		String query = "SELECT actor.first_name, actor.last_name \n"
+				+ "FROM film JOIN film_actor ON film.id = film_actor.film_id \n"
+				+ "JOIN actor ON film_actor.actor_id = actor.id  WHERE film.id = ?;";
 
 		try {
 
@@ -123,8 +127,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			ps.setInt(1, filmId);
 			listResult = ps.executeQuery();
 			while (listResult.next()) {
-				Actor actor = new Actor(listResult.getInt("id"), listResult.getString("first_name"),
-						listResult.getString("last_name"));
+				Actor actor = new Actor(listResult.getString("first_name"), listResult.getString("last_name"));
 				actorList.add(actor);
 
 			}
@@ -157,7 +160,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement ps = null;
 		ResultSet filmResult = null;
 		Connection conn = null;
-		String query = "SELECT film.id, film.title, film. description, film. release_year, film.rating FROM film WHERE film.title LIKE ? OR film.description LIKE ?";
+		String query = "SELECT film.id, film.title, film.description, film.release_year, film.rating, language.name\n"
+						+ "FROM film JOIN language ON film.language_id = language.id\n"
+						+ "WHERE film.title LIKE ? OR film.description LIKE ?";
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASS);
@@ -168,7 +173,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			while (filmResult.next()) {
 				Film film = new Film(filmResult.getString("title"), filmResult.getString("description"),
 						filmResult.getInt("release_year"), filmResult.getString("rating"),
-						findActorsByFilmId(filmResult.getInt("id")));
+						filmResult.getString("language.name"), findActorsByFilmId(filmResult.getInt("id")));
 
 				films.add(film);
 			}

@@ -1,5 +1,6 @@
 package com.skilldistillery.filmquery.entities;
 
+
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ public class Film {
 	private String description;
 	private Integer releaseYear;
 	private int languageId;
+	private String languageName;
 	private int rentalDuration;
 	private double rentalRate;
 	private Integer length;
@@ -22,12 +24,17 @@ public class Film {
 	}
 
 	public Film(String title, String description, Integer releaseYear, String rating, List<Actor> actorList) {
-		super();
 		this.title = title;
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.rating = rating;
 		this.actorList = actorList;
+	}
+
+	public Film(String title, String description, Integer releaseYear, String rating, String languageName,
+			List<Actor> actorList) {
+		this(title, description, releaseYear, rating, actorList);
+		this.languageName = languageName;
 	}
 
 	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
@@ -139,8 +146,28 @@ public class Film {
 		return actorList;
 	}
 
+	public void printActorList() {
+		List<Actor> actorList = getActorList();
+		System.out.print("Staring: ");
+		for (int i = 0; i < actorList.size(); i++) {
+			if (i == actorList.size() - 1) {
+				System.out.println("and \n" + actorList.get(i));
+			} else {
+				System.out.println(actorList.get(i));
+			}
+		}
+	}
+
 	public void setActorList(List<Actor> actorList) {
 		this.actorList = actorList;
+	}
+
+	public String getLanguageName() {
+		return languageName;
+	}
+
+	public void setLanguageName(String languageName) {
+		this.languageName = languageName;
 	}
 
 	@Override
@@ -162,8 +189,9 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "title= " + title + "\ndescription= " + description + "\nreleaseYear=" + releaseYear + "\nrating= "
-				+ rating + "\nactorList=" + actorList + "";
+//		List<Actor> aList = printActorList();
+		return "Title: " + title + "\nDescription: " + description + "\nReleaseYear: " + releaseYear + "\nRating: "
+				+ rating + "\nLanguage: " + languageName;
 	}
 
 }

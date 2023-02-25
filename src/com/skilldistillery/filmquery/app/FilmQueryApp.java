@@ -1,6 +1,5 @@
 package com.skilldistillery.filmquery.app;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -55,7 +54,9 @@ public class FilmQueryApp {
 			System.out.println("|         2. Look up film by keyword                    |");
 			System.out.println("|                3. Exit                                |");
 			System.out.println("----------------------------------------------------------");
+
 			userInput = input.nextInt();
+
 			input.nextLine();
 			switch (userInput) {
 			case 1:
@@ -65,24 +66,27 @@ public class FilmQueryApp {
 				lookUpByKeyword(input);
 				break;
 			case 3:
+				System.out.println("Thanks for your queries, goodbye!");
 				isMakingSelection = false;
 				break;
 			default:
 				System.out.println("Not a valid selection please try again");
+				break;
 			}
 		}
 	}
 
 	public void lookUpById(Scanner input, int userInput) {
-		System.out.println("Please enter your films ID number");
+		System.out.print("Please enter your films ID number: ");
 		userInput = input.nextInt();
 		input.nextLine();
 		Film film = db.findFilmById(userInput);
 
 		if (film == null) {
-			System.out.println("Sorry, there is no film with that ID number");
+			System.out.println("Sorry, there is no film with that ID number.");
 		} else {
 			System.out.println(film);
+			film.printActorList();
 			System.out.println();
 		}
 	}
@@ -90,15 +94,16 @@ public class FilmQueryApp {
 	public void lookUpByKeyword(Scanner input) {
 		String userInput = null;
 		List<Film> films;
-		System.out.println("Please enter a keyword related to your film");
+		System.out.print("Please enter a keyword related to your film: ");
 		userInput = input.next();
 		films = db.findFilmByKeyWord(userInput);
 
-		if (films == null) {
-			System.out.println("Sorry, there is no film matching that description");
+		if (films.isEmpty()) {
+			System.out.println("Sorry, there is no film matching that description.");
 		} else {
 			for (Film film : films) {
 				System.out.println(film);
+				film.printActorList();
 				System.out.println();
 
 			}
