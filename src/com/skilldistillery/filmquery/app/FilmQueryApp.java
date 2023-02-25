@@ -60,7 +60,7 @@ public class FilmQueryApp {
 			input.nextLine();
 			switch (userInput) {
 			case 1:
-				lookUpById(input, userInput);
+				lookUpById(input);
 				break;
 			case 2:
 				lookUpByKeyword(input);
@@ -76,7 +76,8 @@ public class FilmQueryApp {
 		}
 	}
 
-	public void lookUpById(Scanner input, int userInput) {
+	public void lookUpById(Scanner input) {
+		int userInput = 0;
 		System.out.print("Please enter your films ID number: ");
 		userInput = input.nextInt();
 		input.nextLine();
@@ -86,8 +87,10 @@ public class FilmQueryApp {
 			System.out.println("Sorry, there is no film with that ID number.");
 		} else {
 			System.out.println(film);
+			System.out.println();
 			film.printActorList();
 			System.out.println();
+			viewAllFilmDetails(input, userInput);
 		}
 	}
 
@@ -103,11 +106,36 @@ public class FilmQueryApp {
 		} else {
 			for (Film film : films) {
 				System.out.println(film);
+				System.out.println();
 				film.printActorList();
 				System.out.println();
-
+				
 			}
 		}
+	}
+
+	public void viewAllFilmDetails(Scanner input, int filmId) {
+		int userInput;
+		System.out.println("------------------------------------------------");
+		System.out.println("Input 1 to return to main menu");
+		System.out.println("Input 2 to view all details about movie selected");
+		System.out.println("------------------------------------------------");
+		userInput = input.nextInt();
+		input.nextLine();
+		switch (userInput) {
+		case 1:
+			break;
+		case 2:
+			Film allDetailsFilm = db.allFilmDetails(filmId); 
+			System.out.println(allDetailsFilm.printAllDetails());
+			System.out.println();
+			allDetailsFilm.printActorList();
+			System.out.println();
+			allDetailsFilm.printInventoryList();
+			
+		
+		}
+
 	}
 
 }
