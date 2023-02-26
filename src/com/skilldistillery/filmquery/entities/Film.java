@@ -32,17 +32,17 @@ public class Film {
 		this.actorList = actorList;
 	}
 
-	public Film(String title, String description, Integer releaseYear, String rating, String languageName,
+	public Film(int id, String title, String description, Integer releaseYear, String rating, String languageName,
 			List<Actor> actorList) {
 		this(title, description, releaseYear, rating, actorList);
+		this.id = id;
 		this.languageName = languageName;
 	}
 
 	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
 			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures,
 			List<Actor> actorList, String languageName, String categoryName, List<Inventory> inventoryList) {
-		this(title, description, releaseYear, rating, languageName, actorList);
-		this.id = id;
+		this(id, title, description, releaseYear, rating, languageName, actorList);
 		this.languageId = languageId;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
