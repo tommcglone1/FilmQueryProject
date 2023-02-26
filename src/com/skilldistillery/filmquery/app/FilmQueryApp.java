@@ -96,6 +96,7 @@ public class FilmQueryApp {
 
 	public void lookUpByKeyword(Scanner input) {
 		String userInput = null;
+		int userInt = 0;
 		List<Film> films;
 		System.out.print("Please enter a keyword related to your film: ");
 		userInput = input.next();
@@ -108,8 +109,18 @@ public class FilmQueryApp {
 				System.out.println(film);
 				System.out.println();
 				film.printActorList();
-				System.out.println();
-				
+				System.out.println("-----------------------------------------------------");
+				System.out.println("Would you like to view all the details of this film? ");
+				System.out.println("Enter 1 to see details and 2 to continue with list   ");
+				System.out.println("-----------------------------------------------------");
+				userInt = input.nextInt();
+				input.nextLine();
+				if (userInt == 1) {
+					viewAllFilmDetails(userInput);
+					System.out.println();
+				} else if (userInt == 2) {
+					continue;
+				}
 			}
 		}
 	}
@@ -117,7 +128,7 @@ public class FilmQueryApp {
 	public void viewAllFilmDetails(Scanner input, int filmId) {
 		int userInput;
 		System.out.println("------------------------------------------------");
-		System.out.println("Input 1 to return to main menu");
+		System.out.println("Input 1 to go to return to main menu");
 		System.out.println("Input 2 to view all details about movie selected");
 		System.out.println("------------------------------------------------");
 		userInput = input.nextInt();
@@ -126,15 +137,29 @@ public class FilmQueryApp {
 		case 1:
 			break;
 		case 2:
-			Film allDetailsFilm = db.allFilmDetails(filmId); 
+			Film allDetailsFilm = db.allFilmDetails(filmId);
 			System.out.println(allDetailsFilm.printAllDetails());
 			System.out.println();
 			allDetailsFilm.printActorList();
 			System.out.println();
 			allDetailsFilm.printInventoryList();
-			
-		
+			break;
+		default:
+			System.out.println("That is not a valid selection");
+			break;
+
 		}
+
+	}
+
+	public void viewAllFilmDetails(String filmKeyword) {
+
+		Film allDetailsFilm = db.allFilmDetails(filmKeyword);
+		System.out.println(allDetailsFilm.printAllDetails());
+		System.out.println();
+		allDetailsFilm.printActorList();
+		System.out.println();
+		allDetailsFilm.printInventoryList();
 
 	}
 

@@ -27,48 +27,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	}
 
 	@Override
-	public Film findFilmById(int filmId) {
-		Film film = null;
-		PreparedStatement ps = null;
-		ResultSet filmResult = null;
-		Connection conn = null;
-		String query = "SELECT film.title, film.description, film.release_year, film.rating, language.name \n"
-				+ "FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
-
-		try {
-			conn = DriverManager.getConnection(URL, USER, PASS);
-			ps = conn.prepareStatement(query);
-			ps.setInt(1, filmId);
-			filmResult = ps.executeQuery();
-			if (filmResult.next()) {
-				film = new Film(filmResult.getString("film.title"), filmResult.getString("film.description"),
-						filmResult.getInt("film.release_year"), filmResult.getString("film.rating"),
-						filmResult.getString("language.name"), findActorsByFilmId(filmId));
-			}
-			filmResult.close();
-			ps.close();
-			conn.close();
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		} finally {
-			try {
-				if (filmResult != null) {
-					filmResult.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException sqle) {
-				System.err.println(sqle);
-			}
-		}
-		return film;
-	}
-
-	@Override
 	public Actor findActorById(int actorId) {
 		Actor actor = null;
 		PreparedStatement stmt = null;
@@ -154,6 +112,48 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return actorList;
 	}
+	
+	@Override
+	public Film findFilmById(int filmId) {
+		Film film = null;
+		PreparedStatement ps = null;
+		ResultSet filmResult = null;
+		Connection conn = null;
+		String query = "SELECT film.title, film.description, film.release_year, film.rating, language.name \n"
+				+ "FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASS);
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, filmId);
+			filmResult = ps.executeQuery();
+			if (filmResult.next()) {
+				film = new Film(filmResult.getString("film.title"), filmResult.getString("film.description"),
+						filmResult.getInt("film.release_year"), filmResult.getString("film.rating"),
+						filmResult.getString("language.name"), findActorsByFilmId(filmId));
+			}
+			filmResult.close();
+			ps.close();
+			conn.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			try {
+				if (filmResult != null) {
+					filmResult.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException sqle) {
+				System.err.println(sqle);
+			}
+		}
+		return film;
+	}
 
 	@Override
 	public List<Film> findFilmByKeyWord(String filmKeyword) {
@@ -199,6 +199,104 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			}
 		}
 		return films;
+	}
+	
+
+	@Override
+	public Film allFilmDetails(String filmKeyword) {
+		Film film = null;
+		PreparedStatement ps = null;
+		ResultSet filmResult = null;
+		Connection conn = null;
+		String query = "SELECT film.*, language.name, category.name, ii.media_condition, ii.id \n"
+				+ "FROM film JOIN language ON film.language_id = language.id \n"
+				+ "JOIN film_category fc ON film.id = fc.film_id \n"
+				+ "JOIN category ON fc.category_id = category.id \n"
+				+ "JOIN inventory_item ii ON film.id = ii.film_id \n" 
+				+ "WHERE film.title LIKE ? OR film.description LIKE ?";
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASS);
+			ps = conn.prepareStatement(query);
+			ps.setString(1, "%" + filmKeyword + "%");
+			ps.setString(2, "%" + filmKeyword + "%");
+			filmResult = ps.executeQuery();
+			if (filmResult.next()) {
+				film = new Film(filmResult.getInt("film.id"), filmResult.getString("film.title"),
+						filmResult.getString("film.description"), filmResult.getInt("film.release_year"),
+						filmResult.getInt("film.language_id"), filmResult.getInt("film.rental_duration"),
+						filmResult.getDouble("film.rental_rate"), filmResult.getInt("film.length"),
+						filmResult.getDouble("film.replacement_cost"), filmResult.getString("film.rating"),
+						filmResult.getString("film.special_features"), findActorsByFilmId(filmResult.getInt("film.id")),
+						filmResult.getString("language.name"), filmResult.getString("category.name"),
+						findInventoryByFilmId(filmResult.getInt("film.id")));
+			}
+			filmResult.close();
+			ps.close();
+			conn.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			try {
+				if (filmResult != null) {
+					filmResult.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException sqle) {
+				System.err.println(sqle);
+			}
+		}
+		return film;
+
+	}
+
+	@Override
+	public List<Inventory> findInventoryByFilmKeyword(String filmKeyword) {
+		List<Inventory> invList = new ArrayList<>();
+		PreparedStatement ps = null;
+		ResultSet listResult = null;
+		Connection conn = null;
+		String query = "SELECT ii.id, ii.media_condition \n"
+				+ "FROM film JOIN inventory_item ii ON film.id = ii.film_id \n" 
+				+ "WHERE film.title LIKE ? OR film.description LIKE ?";
+
+		try {
+
+			conn = DriverManager.getConnection(URL, USER, PASS);
+			ps = conn.prepareStatement(query);
+			ps.setString(1, filmKeyword);
+			listResult = ps.executeQuery();
+			while (listResult.next()) {
+				Inventory inv = new Inventory(listResult.getInt("ii.id"), listResult.getString("ii.media_condition"));
+				invList.add(inv);
+
+			}
+			listResult.close();
+			ps.close();
+			conn.close();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			try {
+				if (listResult != null) {
+					listResult.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException sqle) {
+				System.err.println(sqle);
+			}
+		}
+		return invList;
 	}
 
 	@Override

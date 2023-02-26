@@ -13,4 +13,6 @@ public interface DatabaseAccessor {
   public List<Film> findFilmByKeyWord(String userInput);
   public Film allFilmDetails(int filmId);
   public List<Inventory> findInventoryByFilmId(int filmId);
+  public Film allFilmDetails(String filmKeyword);
+  public List<Inventory> findInventoryByFilmKeyword(String filmKeyword);
 }
