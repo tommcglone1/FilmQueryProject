@@ -98,7 +98,7 @@ public class FilmQueryApp {
 			userDecision = input.nextInt();
 			input.nextLine();
 			if (userDecision == 1) {
-				viewAllFilmDetails(input, userInput);
+				viewAllFilmDetails(userInput);
 			} else if (userDecision == 2) {
 
 			}
@@ -128,8 +128,8 @@ public class FilmQueryApp {
 				userDecision = input.nextInt();
 				input.nextLine();
 				if (userDecision == 1) {
-					viewAllFilmDetails(input, film.getId());
-					System.out.println("---------------------------");
+					viewAllFilmDetails(film.getId());
+					System.out.println("--------------------------------------------------------------");
 				} else if (userDecision == 2) {
 					continue;
 				} else if (userDecision == 3) {
@@ -139,7 +139,7 @@ public class FilmQueryApp {
 		}
 	}
 
-	public void viewAllFilmDetails(Scanner input, int filmId) {
+	public void viewAllFilmDetails(int filmId) {
 		Film allDetailsFilm = db.allFilmDetails(filmId);
 		System.out.println(allDetailsFilm.printAllDetails());
 		System.out.println();
